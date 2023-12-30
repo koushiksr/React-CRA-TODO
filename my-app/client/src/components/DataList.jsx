@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { logout } from "../authProvider/Auth";
 import {
+  // AccountCircle,
+  ExitToApp,
+  Add,
+  Edit,
+  Delete,
+} from "@mui/icons-material";
+
+import {
   addData,
   fetchData,
   updateData,
@@ -33,22 +41,24 @@ const DataList = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="bg-gray-800 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-lg font-bold">Nav bar</h1>
-          <h5 className="text-sl font-bold">
-            hello {localStorage.getItem("name")}
-          </h5>
-          <button
-            onClick={logout}
-            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-          >
-            Logout
-          </button>
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+          <h1 className="text-lg font-bold mb-4 md:mb-0">Nav bar</h1>
+          <div className="flex items-center space-x-4">
+            <h5 className="text-sm font-bold md:text-base">
+              hello {localStorage.getItem("name")}
+            </h5>
+            <button
+              onClick={logout}
+              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+            >
+              <ExitToApp />
+            </button>
+          </div>
         </div>
       </div>
 
       <h6 className="text-2xl font-bold mb-2">Add New Data</h6>
-      <div className="flex space-x-4">
+      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
         <input
           type="text"
           placeholder="Name"
@@ -74,14 +84,14 @@ const DataList = () => {
             }
             className="bg-green-500 text-white px-4 py-2 rounded"
           >
-            Update Data
+            <Edit />
           </button>
         ) : (
           <button
             onClick={() => addData(setData, newData, setNewData, data)}
             className="bg-green-500 text-white px-4 py-2 rounded"
           >
-            Add Data
+            <Add />
           </button>
         )}
       </div>
@@ -90,9 +100,9 @@ const DataList = () => {
         {data.map((item) => (
           <li
             key={item._id}
-            className="flex items-center justify-between bg-gray-100 p-2 mb-2"
+            className="flex flex-col md:flex-row items-center justify-between bg-gray-100 p-2 mb-2"
           >
-            <div>
+            <div className="mb-2 md:mb-0">
               <span className="font-bold">{item.name}</span> -{" "}
               {item.description}
             </div>
@@ -101,13 +111,13 @@ const DataList = () => {
                 className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
                 onClick={() => edit(item._id, item)}
               >
-                Update
+                <Edit />
               </button>
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded"
                 onClick={() => deleteData(item._id, setData, data)}
               >
-                Delete
+                <Delete />
               </button>
             </div>
           </li>

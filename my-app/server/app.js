@@ -1,12 +1,11 @@
 const express = require("express");
-const apiRoutes = require("./routes/apiRoutes");
-const connectDatabase = require("./connect/connectDatabase");
+const apiRoutes = require("./src/routes/apiRoutes");
+const connectDatabase = require("./src/connect/connectDatabase");
 const cors = require("cors");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.json());
 require("dotenv").config();
 
 // connecting database

@@ -3,13 +3,27 @@ import axios from "axios";
 import { Button, TextField } from "@mui/material";
 import { login, register } from "../authProvider/Auth";
 import Spinner from "../utils/spinner";
+const useForm = (initialState) => {
+  const [formData, setFormData] = useState(initialState);
+
+  const handleChange = (fieldName, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: value,
+    }));
+  };
+
+  return [formData, handleChange];
+};
 
 const AuthForm = ({ setIsLoggedIn }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [form, setForm] = useForm({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phoneNumber: "",
+  });
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -17,72 +31,58 @@ const AuthForm = ({ setIsLoggedIn }) => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${
       localStorage.getItem("token") || null
     }`;
-  });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
-      if (!email || !password || !confirmPassword || !name || !phoneNumber) {
+      if (
+        !form.email ||
+        !form.password ||
+        !form.confirmPassword ||
+        !form.name ||
+        !form.phoneNumber
+      ) {
         alert("All fields are required for signup");
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
         alert("Invalid email address");
         return;
       }
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(form.password)) {
         alert(
           "Password must be at least 8 characters long with a mix of uppercase, lowercase, and numbers"
         );
         return;
       }
-      if (password !== confirmPassword) {
+      if (form.password !== form.confirmPassword) {
         alert("Password and confirm password do not match");
         return;
       }
-      if (!name.trim()) {
+      if (!form.name.trim()) {
         alert("Name is required for signup");
         return;
       }
-      if (!/^\d{10}$/.test(phoneNumber)) {
+      if (!/^\d{10}$/.test(form.phoneNumber)) {
         alert("Invalid phone number");
         return;
       }
     }
     isSignUp
-      ? await register(
-          name,
-          email,
-          phoneNumber,
-          password,
-          confirmPassword,
-          setIsSignUp,
-          setEmail,
-          setPassword,
-          setConfirmPassword,
-          setName,
-          setPhoneNumber
-        )
-      : await login(
-          email,
-          password,
-          setIsLoggedIn,
-          setEmail,
-          setPassword,
-          setConfirmPassword,
-          setName,
-          setPhoneNumber,
-          setLoading
-        );
+      ? await register(form, setIsSignUp, setForm, setLoading)
+      : await login(form, setIsLoggedIn, setForm, setLoading);
   };
 
-  const handleToggleForm = (e) => {
+  const handleToggleForm = () => {
     setIsSignUp(!isSignUp);
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setName("");
-    setPhoneNumber("");
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phoneNumber: "",
+    });
   };
 
   return (
@@ -106,10 +106,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     label="Name"
                     variant="outlined"
                     fullWidth
-                    value={name}
+                    value={form.name}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      setName(value);
+                      setForm("name", e.target.value);
                     }}
                     required
                   />
@@ -119,9 +118,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     label="Phone Number"
                     variant="outlined"
                     fullWidth
-                    value={phoneNumber}
+                    value={form.phoneNumber}
                     onChange={(e) => {
-                      setPhoneNumber(e.target.value);
+                      setForm("phoneNumber", e.target.value);
                       /^\d{10}$/.test(e.target.value);
                     }}
                     required
@@ -133,9 +132,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     label="Email"
                     variant="outlined"
                     fullWidth
-                    value={email}
+                    value={form.email}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setForm("email", e.target.value);
                       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value);
                     }}
                     required
@@ -148,9 +147,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     variant="outlined"
                     fullWidth
                     type="password"
-                    value={password}
+                    value={form.password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      setForm("password", e.target.value);
                       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(
                         e.target.value
                       );
@@ -164,11 +163,12 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     variant="outlined"
                     fullWidth
                     type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={form.confirmPassword}
+                    onChange={(e) => setForm("confirmPassword", e.target.value)}
                     required
                     onBlur={() => {
-                      const doPasswordsMatch = password === confirmPassword;
+                      const doPasswordsMatch =
+                        form.password === form.confirmPassword;
                       !doPasswordsMatch && alert("password do not match");
                     }}
                   />
@@ -182,9 +182,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     label="Email"
                     variant="outlined"
                     fullWidth
-                    value={email}
+                    value={form.email}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setForm("email", e.target.value);
                       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value);
                     }}
                     required
@@ -197,9 +197,9 @@ const AuthForm = ({ setIsLoggedIn }) => {
                     variant="outlined"
                     fullWidth
                     type="password"
-                    value={password}
+                    value={form.password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      setForm("password", e.target.value);
                       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(
                         e.target.value
                       );

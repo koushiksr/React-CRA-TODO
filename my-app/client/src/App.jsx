@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AuthForm from "./components/AuthForm";
-import { verifyUserLogin } from "./authProvider/Auth";
 import Authenticated from "./components/protectedRoutes/Authenticated";
+import { useVerifyUserLogin } from "./authProvider/Auth";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    verifyUserLogin(setIsLoggedIn);
-    // console.log("usefeefey", a);
-  }, []);
-
+  useVerifyUserLogin(setIsLoggedIn);
   return (
     <>
       {isLoggedIn ? (
@@ -18,19 +14,6 @@ function App() {
         <AuthForm setIsLoggedIn={setIsLoggedIn} />
       )}
     </>
-
-    // <BrowserRouter>
-    //   <Routes>
-    //     {!isLoggedIn ? (
-    //       <Route path="/" element={<AuthForm />} />
-    //     ) : (
-    //       <Route element={<ProtectedRoutes />}>
-    //         <Route path="/datalist" element={<DataList />} />
-    //         <Route path="/dashboard" element={<Child2 />} />
-    //       </Route>
-    //     )}
-    //   </Routes>
-    // </BrowserRouter>
   );
 }
 

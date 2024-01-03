@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { logout } from "../authProvider/Auth";
-import {
-  // AccountCircle,
-  ExitToApp,
-  Add,
-  Edit,
-  Delete,
-} from "@mui/icons-material";
+import { ExitToApp, Add, Edit, Delete } from "@mui/icons-material";
 
 import {
   addData,
@@ -42,7 +36,7 @@ const DataList = () => {
     <div className="container mx-auto p-4">
       <div className="bg-gray-800 text-white p-4">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <h1 className="text-lg font-bold mb-4 md:mb-0">Nav bar</h1>
+          <h1>{}</h1>
           <div className="flex items-center space-x-4">
             <h5 className="text-sm font-bold md:text-base">
               hello {localStorage.getItem("name")}
@@ -57,7 +51,7 @@ const DataList = () => {
         </div>
       </div>
 
-      <h6 className="text-2xl font-bold mb-2">Add New Data</h6>
+      <h6 className="text-1xl  mt-2">Add Data</h6>
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
         <input
           type="text"
@@ -95,7 +89,7 @@ const DataList = () => {
           </button>
         )}
       </div>
-      <h6 className="text-2xl font-bold mb-4">Data List</h6>
+      <h6 className="text-1xl  mt-4">Data List</h6>
       <ul className="mb-4">
         {data.map((item) => (
           <li
